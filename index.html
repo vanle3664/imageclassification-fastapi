@@ -16,41 +16,65 @@
   <body>
     <div class="container">
       <div class="header clearfix">
+
         <nav>
+
           <ul class="nav nav-pills pull-right">
             <li role="presentation" class="active"><a href="#">Home</a></li>
             <li role="presentation"><a href="https://www.pytorials.com/">About</a></li>
           </ul>
+
         </nav>
+
         <h3 class="text-muted">Attendance checker</h3>
       </div>
+
       <div class="jumbotron">
+
         <h3 class="jumbotronHeading">Draw the digit inside this Box!</h3>
-    <div class="canvasDiv">
-          <canvas id="canvas" width="299" height="299"></canvas>
+
+        <div class="canvasDiv">
+          
+          <img id="output_image" height=299px width=299px>
+          <input type="file" accept="image/*" onchange="preview_image(event)">
+
+          <script type="text/javascript">
+            function preview_image(event) {
+              var reader = new FileReader();
+              reader.onload = function(){
+                var output = document.getElementById('output_image');
+                output.src = reader.result;
+              }
+              reader.readAsDataURL(event.target.files[0]);
+            }
+          </script>
+
           <br>
+
           <p style="text-align:center;">
             <a class="btn btn-success myButton" href="#" role="button">Predict</a>
             <a class="btn btn-primary" href="#" id="clearButton" role="button">Clear</a>
-        </p>
+          </p>
         </div>
       </div>
+
       <div class="jumbotron">
         <p id="result">Get your prediction here!!!</p>
       </div>
+
       <footer class="footer">
         <p>&copy; Nhóm 12, Computer Vision</p>
       </footer>
+
     </div> <!-- /container -->
 
     <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
-    <script src="index.js"></script>
 
     <script type="text/javascript">
 	   
 		$(".myButton").click(function(){
-			var canvasObj = document.getElementById("canvas");
-			var img = canvasObj.toDataURL();
+			var imgObj = document.getElementById("output_image");
+			var img = imgObj.toDataURL();
 			$.ajax({
 				type: "POST",
 				url: "http://127.0.0.1:8000/predict-svm/image",
