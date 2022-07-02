@@ -6,8 +6,8 @@ from fastapi import FastAPI, File, UploadFile
 #from prediction import predict, read_image
 import tensorflow as tf
 from tensorflow.keras.applications.inception_resnet_v2 import preprocess_input
-from keras.preprocessing.image import img_to_array
-from keras.preprocessing.image import load_img
+from tensorflow.keras.utils import img_to_array
+from tensorflow.keras.utils import load_img
 import numpy as np
 from io import BytesIO
 from PIL import Image
@@ -58,13 +58,19 @@ async def predict_api(file: UploadFile = File(...)):
 
     image = img_to_array(image.resize((299, 299)))
     image = np.expand_dims(image, 0)
-    image = preprocess_input(image)
+#     image = preprocess_input(image)
     image = np.mean(image, axis=3)
     x = image.flatten()
-    
+    x = x.reshape(1, -1)
+
+
     x = pca.transform(x)
-    x = x.reshape(-1, 1)
+
+#     x = x.reshape(-1, 1)
+
     res = model.predict(x)
+
+    return res
 
     response = {"class": res.argmax()}
 
