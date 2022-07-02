@@ -70,8 +70,6 @@ async def predict_api(file: UploadFile = File(...)):
 
     res = model.predict(x)
 
-    return res
+    
 
-    response = {"class": res.argmax()}
-
-    return response
+    return res[0]
