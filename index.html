@@ -34,25 +34,27 @@
         <h3 class="jumbotronHeading">Draw the digit inside this Box!</h3>
 
         <div class="canvasDiv">
-          
-          <img id="output_image" height=299px width=299px>
-          <input type="file" accept="image/*" onchange="preview_image(event)">
+          <img id="output_img" height=299px width=299px></img>
+
+          <input type="file" accept="image/*" alt="No image" onchange="preview_image(event)">
 
           <script type="text/javascript">
             function preview_image(event) {
               var reader = new FileReader();
               reader.onload = function(){
-                var output = document.getElementById('output_image');
+                var output = document.getElementById('output_img');
                 output.src = reader.result;
               }
               reader.readAsDataURL(event.target.files[0]);
             }
+            
           </script>
 
           <br>
 
           <p style="text-align:center;">
             <a class="btn btn-success myButton" href="#" role="button">Predict</a>
+            
             <a class="btn btn-primary" href="#" id="clearButton" role="button">Clear</a>
           </p>
         </div>
@@ -71,19 +73,28 @@
     <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
 
     <script type="text/javascript">
+      $( "#clearButton" ).on( "click", function(){
+        var image = document.querySelector( "#output_img" );
+        image = null;
+      });
+
+    </script>
+
+    <script type="text/javascript">
 	   
-		$(".myButton").click(function(){
-			var imgObj = document.getElementById("output_image");
-			var img = imgObj.toDataURL();
-			$.ajax({
-				type: "POST",
-				url: "http://127.0.0.1:8000/predict-svm/image",
-				data: img,
-				success: function(data){
-					$('#result').text(' Predicted Output: '+ data);
-				}
-			});
-		});
+      $(".myButton").click(function(){
+        var imgObj = document.getElementById("output_img");
+        var img = imgObj.toDataURL();
+        $.ajax({
+          type: "POST",
+          url: "http://127.0.0.1:8000/predict-svm/image",
+          contentType: "multipart/form-data",
+          data: img,
+          success: function(data){
+            $('#result').text(' Predicted Output: '+ data);
+          }
+        });
+      });
    
    	</script>
   </body>
