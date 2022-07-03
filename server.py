@@ -32,40 +32,12 @@ with open("model4.pkl", 'rb') as f2:
 print(model)
 
 
-@app.post("/predict-tf/image")
-async def predict_api(file: UploadFile = File(...)):
-    extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
-    if not extension:
-        return "Image must be jpg or png format!"
-    res = RetinaFace.detect_faces(file.filename)
-    axis = res['face_1']['facial_area']
-
-    image = Image.open(BytesIO(await file.read()))
-    image = image[axis[1]:axis[3], axis[0]:axis[2]]
-
-    model = tf.keras.models.load_model("model4.h5")
-
-    image = img_to_array(image.resize((299, 299)))
-    image = np.expand_dims(image, 0)
-    image = preprocess_input(image)
-
-    res = model.predict(image)
-
-    response = {"class": res.argmax()}
-
-    return response
-
-
 @app.post("/predict-svm/image")
 async def predict_api(file: UploadFile = File(...)):
     extension = file.filename.split(".")[-1] in ("jpg", "jpeg", "png")
     if not extension:
         return "Image must be jpg or png format!"
-    res = RetinaFace.detect_faces(file.filename)
-    axis = res['face_1']['facial_area']
 
-    image = Image.open(BytesIO(await file.read()))
-    image = image[axis[1]:axis[3], axis[0]:axis[2]]
     image = Image.open(BytesIO(await file.read()))
 
     image = img_to_array(image.resize((299, 299)))
