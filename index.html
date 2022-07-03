@@ -31,12 +31,12 @@
 
       <div class="jumbotron">
 
-        <h3 class="jumbotronHeading">Draw the digit inside this Box!</h3>
+        <h3 class="jumbotronHeading">Upload ảnh bạn vào đây!</h3>
 
         <div class="canvasDiv">
+          
           <img id="output_img" height=299px width=299px></img>
-
-          <input type="file" accept="image/*" alt="No image" onchange="preview_image(event)">
+          <input type="file" accept="image/*" onchange="preview_image(event)" id="input_img">
 
           <script type="text/javascript">
             function preview_image(event) {
@@ -47,13 +47,13 @@
               }
               reader.readAsDataURL(event.target.files[0]);
             }
-            
           </script>
+          
 
           <br>
 
           <p style="text-align:center;">
-            <a class="btn btn-success myButton" href="#" role="button">Predict</a>
+            <a class="btn btn-success myButton" href="#" role="button">Submit</a>
             
             <a class="btn btn-primary" href="#" id="clearButton" role="button">Clear</a>
           </p>
@@ -61,7 +61,7 @@
       </div>
 
       <div class="jumbotron">
-        <p id="result">Get your prediction here!!!</p>
+        <p id="result">Chào mừng bạn đến với lớp học!!!</p>
       </div>
 
       <footer class="footer">
@@ -75,7 +75,8 @@
     <script type="text/javascript">
       $( "#clearButton" ).on( "click", function(){
         var image = document.querySelector( "#output_img" );
-        image = null;
+        image.src = null;
+        $('#result').text("Chào mừng bạn đến với lớp học!!!")
       });
 
     </script>
@@ -83,16 +84,26 @@
     <script type="text/javascript">
 	   
       $(".myButton").click(function(){
-        var imgObj = document.getElementById("output_img");
-        var img = imgObj.toDataURL();
+        var file = document.getElementById("input_img").files[0]
+        var fd = new FormData()
+        fd.append('file', file)
+        // console.log(file)
         $.ajax({
-          type: "POST",
+          type: "post",
           url: "http://127.0.0.1:8000/predict-svm/image",
-          contentType: "multipart/form-data",
-          data: img,
-          success: function(data){
-            $('#result').text(' Predicted Output: '+ data);
-          }
+          data: fd,
+          processData: false,
+				  contentType: false,
+          success: function(res){
+            if (res == "Unknown")
+              $('#result').text('Không tìm thấy bạn trong lớp học! Upload lại ảnh hoặc thông báo lại cho giáo viên nhé!');
+            else 
+              $('#result').text('Chào '+ res + '! Bạn đã được điểm danh');
+            console.log(res)
+          }, 
+          error: function(err){
+            console.log(err)
+          }   
         });
       });
    

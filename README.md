@@ -7,6 +7,7 @@ Step to run:
 ```bash
    pip install fastapi
    pip install "uvicorn[standard]"
+   pip install retina-face
 ```
 
 2. Run it:
